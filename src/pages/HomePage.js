@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Form from '../components/Form';
 import Card from '../components/Card';
+import Header from '../components/Header';
 
 const HomePage = () => {
   const [scenes, setScenes] = useState([]);
@@ -14,23 +15,29 @@ const HomePage = () => {
   };
 
   const configureScene = (index) => {
-    // Логика для настройки сцены
     console.log(`Настройка сцены ${index}`);
   };
 
   return (
-    <div>
-      <h1>Наше название</h1>
-      <Form onSubmit={addScene} />
-      {scenes.map((scene, index) => (
-        <Card
-          key={index}
-          title={scene.name}
-          status={scene.status}
-          onConfigure={() => configureScene(index)}
-          onDelete={() => deleteScene(index)}
-        />
-      ))}
+    <div className="home-page">
+      <Header />
+      <div className="content">
+        <h2>Сцены</h2>
+        <Form onSubmit={addScene} />
+        {scenes.length === 0 ? (
+          <p>Сцены отсутствуют. Добавьте новую сцену.</p>
+        ) : (
+          scenes.map((scene, index) => (
+            <Card
+              key={index}
+              title={scene.name}
+              status={scene.status}
+              onConfigure={() => configureScene(index)}
+              onDelete={() => deleteScene(index)}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 };
