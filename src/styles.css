@@ -6,7 +6,7 @@ body {
 
 /* Шапка */
 .header {
-  background-color: #282c34;
+  background-color: #0056b3;
   padding: 10px 20px;
   color: white;
   display: flex;
@@ -68,4 +68,66 @@ body {
 
 .card button:hover {
   background-color: #ddd;
+}
+
+
+.devices-page {
+  padding: 20px;
+}
+
+.devices-page .content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Общие стили для форм авторизации и регистрации */
+.auth-form {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.auth-form button:hover {
+  background-color: #0056b3;
+}
+
+.back-button, .register-button {
+  margin-top: 10px;
+  background-color: #6c757d;
+}
+
+.back-button:hover, .register-button:hover {
+  background-color: #5a6268;
 }
