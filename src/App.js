@@ -6,20 +6,26 @@ import DevicesPage from './pages/DevicesPage';
 import NotFound from './pages/NotFound';
 import LoginForm from './components/LoginForm';
 import RegistrationForm from './components/RegistrationForm';
+import Dashboard from './pages/Dashboard';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [registered, setRegistered] = useState(false); // Новое состояние для отслеживания регистрации
 
   // Функция для обработки входа
   const handleLogin = (email, password) => {
     console.log('Вход:', email, password);
     setIsLoggedIn(true);
+    setRegistered(false); // Сбрасываем флаг регистрации после входа
   };
 
   // Функция для обработки регистрации
   const handleRegister = (email, password) => {
     console.log('Регистрация:', email, password);
-    setIsLoggedIn(true); // После регистрации автоматически входим в систему
+    setRegistered(true); // Устанавливаем флаг регистрации
+    // Не устанавливаем isLoggedIn в true, чтобы пользователь вошел через авторизацию
   };
 
   // Функция для выхода
@@ -29,66 +35,92 @@ const App = () => {
 
   return (
     <Router>
-      <Routes>
-        {/* Главная страница — это страница авторизации */}
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/home" />
-            ) : (
-              <LoginForm onLogin={handleLogin} />
-            )
-          }
-        />
+      {/* Верхняя шапка */}
+      <Header />
 
-        {/* Страница регистрации */}
-        <Route
-          path="/register"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/home" />
-            ) : (
-              <RegistrationForm onRegister={handleRegister} />
-            )
-          }
-        />
+      {/* Основной контент */}
+      <div style={{ display: 'flex' }}>
+        {/* Боковая панель (отображается только для авторизованных пользователей) */}
+        {isLoggedIn && <Sidebar />}
 
-        {/* Защищенные маршруты */}
-        <Route
-          path="/home"
-          element={
-            isLoggedIn ? (
-              <HomePage onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/scenarios"
-          element={
-            isLoggedIn ? (
-              <ScenarioPage />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
-        <Route
-          path="/devices"
-          element={
-            isLoggedIn ? (
-              <DevicesPage />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
-        />
+        {/* Основной контент */}
+        <div className="main-content">
+          <Routes>
+            {/* Главная страница — это страница авторизации */}
+            <Route
+              path="/"
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/home" />
+                ) : registered ? (
+                  <LoginForm onLogin={handleLogin} />
+                ) : (
+                  <LoginForm onLogin={handleLogin} />
+                )
+              }
+            />
 
-        {/* Страница 404 */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+            {/* Страница регистрации */}
+            <Route
+              path="/register"
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/home" />
+                ) : registered ? (
+                  <Navigate to="/" />
+                ) : (
+                  <RegistrationForm onRegister={handleRegister} />
+                )
+              }
+            />
+
+            {/* Защищенные маршруты */}
+            <Route
+              path="/home"
+              element={
+                isLoggedIn ? (
+                  <HomePage onLogout={handleLogout} />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/scenarios"
+              element={
+                isLoggedIn ? (
+                  <ScenarioPage />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/devices"
+              element={
+                isLoggedIn ? (
+                  <DevicesPage />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                isLoggedIn ? (
+                  <Dashboard />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+
+            {/* Страница 404 */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </div>
     </Router>
   );
 };
