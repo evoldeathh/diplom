@@ -1,128 +1,135 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import ScenarioPage from './pages/ScenarioPage';
-import DevicesPage from './pages/DevicesPage';
-import NotFound from './pages/NotFound';
-import LoginForm from './components/LoginForm';
-import RegistrationForm from './components/RegistrationForm';
+import { Layout, notification } from 'antd';
 import Dashboard from './pages/Dashboard';
+import ViewDashboard from './pages/ViewDashboardpage';
+import DevicesPage from './pages/DevicesPage';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 
-const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [registered, setRegistered] = useState(false); // Новое состояние для отслеживания регистрации
+const { Content } = Layout;
 
-  // Функция для обработки входа
-  const handleLogin = (email, password) => {
-    console.log('Вход:', email, password);
-    setIsLoggedIn(true);
-    setRegistered(false); // Сбрасываем флаг регистрации после входа
+function App() {
+  const [controllers, setControllers] = useState([
+    {
+      id: 1,
+      name: "ESP32 Кухня",
+      type: "ESP32",
+      status: "online",
+      pins: [
+        { pin: "D12", type: "digital", mode: "output", value: 0 },
+        { pin: "A0", type: "analog", mode: "input", value: 512 }
+      ]
+    }
+  ]);
+
+  const [dashboards, setDashboards] = useState([
+    {
+      id: 1,
+      name: "Пример дашборда",
+      widgets: [
+        {
+          id: 1,
+          type: "switch",
+          controllerId: 1,
+          pin: "D12",
+          position: { x: 50, y: 50 }
+        },
+        {
+          id: 2,
+          type: "slider",
+          controllerId: 1,
+          pin: "A0",
+          position: { x: 200, y: 50 }
+        }
+      ]
+    }
+  ]);
+
+  const addController = (controller) => {
+    const newController = {
+      ...controller,
+      id: Date.now(),
+      status: "online",
+      pins: controller.pins.map(pin => ({
+        ...pin,
+        value: pin.type === "digital" ? 0 : 0
+      }))
+    };
+    setControllers([...controllers, newController]);
   };
 
-  // Функция для обработки регистрации
-  const handleRegister = (email, password) => {
-    console.log('Регистрация:', email, password);
-    setRegistered(true); // Устанавливаем флаг регистрации
-    // Не устанавливаем isLoggedIn в true, чтобы пользователь вошел через авторизацию
+  const deleteController = (id) => {
+    setControllers(controllers.filter(c => c.id !== id));
   };
 
-  // Функция для выхода
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const updatePinValue = (controllerId, pin, value) => {
+    setControllers(controllers.map(ctrl => 
+      ctrl.id === controllerId
+        ? {
+            ...ctrl,
+            pins: ctrl.pins.map(p => 
+              p.pin === pin ? { ...p, value: value } : p
+            )
+          }
+        : ctrl
+    ));
+  };
+
+  const saveDashboard = async (dashboard) => {
+    return new Promise((resolve) => {
+      const newId = dashboard.id || Date.now();
+      setDashboards(prev => {
+        const updated = prev.some(d => d.id === newId)
+          ? prev.map(d => d.id === newId ? dashboard : d)
+          : [...prev, { ...dashboard, id: newId }];
+        return updated;
+      });
+      resolve(newId);
+    });
+  };
+
+  const deleteDashboard = (id) => {
+    setDashboards(dashboards.filter(d => d.id !== id));
   };
 
   return (
     <Router>
-      {/* Верхняя шапка */}
-      <Header />
-
-      {/* Основной контент */}
-      <div style={{ display: 'flex' }}>
-        {/* Боковая панель (отображается только для авторизованных пользователей) */}
-        {isLoggedIn && <Sidebar />}
-
-        {/* Основной контент */}
-        <div className="main-content">
-          <Routes>
-            {/* Главная страница — это страница авторизации */}
-            <Route
-              path="/"
-              element={
-                isLoggedIn ? (
-                  <Navigate to="/home" />
-                ) : registered ? (
-                  <LoginForm onLogin={handleLogin} />
-                ) : (
-                  <LoginForm onLogin={handleLogin} />
-                )
-              }
-            />
-
-            {/* Страница регистрации */}
-            <Route
-              path="/register"
-              element={
-                isLoggedIn ? (
-                  <Navigate to="/home" />
-                ) : registered ? (
-                  <Navigate to="/" />
-                ) : (
-                  <RegistrationForm onRegister={handleRegister} />
-                )
-              }
-            />
-
-            {/* Защищенные маршруты */}
-            <Route
-              path="/home"
-              element={
-                isLoggedIn ? (
-                  <HomePage onLogout={handleLogout} />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-            <Route
-              path="/scenarios"
-              element={
-                isLoggedIn ? (
-                  <ScenarioPage />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-            <Route
-              path="/devices"
-              element={
-                isLoggedIn ? (
-                  <DevicesPage />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                isLoggedIn ? (
-                  <Dashboard />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
-
-            {/* Страница 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </div>
+      <Layout style={{ minHeight: '100vh' }}>
+        <Header />
+        <Layout>
+          <Sidebar />
+          <Content style={{ padding: '24px', background: '#f0f2f5' }}>
+            <Routes>
+              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/dashboard" element={
+                <Dashboard
+                  dashboards={dashboards}
+                  controllers={controllers}
+                  onSaveDashboard={saveDashboard}
+                  onDeleteDashboard={deleteDashboard}
+                />
+              } />
+              <Route path="/dashboard/:id/view" element={
+                <ViewDashboard
+                  dashboards={dashboards}
+                  controllers={controllers}
+                  onUpdatePin={updatePinValue}
+                />
+              } />
+              <Route path="/devices" element={
+                <DevicesPage
+                  controllers={controllers}
+                  onAddController={addController}
+                  onDeleteController={deleteController}
+                />
+              } />
+            </Routes>
+          </Content>
+        </Layout>
+      </Layout>
     </Router>
   );
-};
+}
 
 export default App;

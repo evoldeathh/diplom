@@ -1,119 +1,161 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Card from '../components/Card';
-import Modal from '../components/Modal';
-import { Button } from 'antd';
+import React, { useState } from 'react';
+import { Button, Card, Modal, Input, Select, Table, Divider, Tag } from 'antd';
 
-const DevicesPage = () => {
-  const [devices, setDevices] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-  const [name, setName] = useState('');
-  const [dataType, setDataType] = useState('');
-  const [currentValue, setCurrentValue] = useState(0);
+const { Option } = Select;
+const DevicesPage = ({ controllers, onAddController, onDeleteController }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newController, setNewController] = useState({
+    name: "",
+    type: "ESP32",
+    pins: [{ pin: "", type: "digital", mode: "output" }]
+  });
 
-  // Загрузка устройств при монтировании компонента
-  // useEffect(() => {
-    //axios.get('http://31.128.49.209/api/devices')
-    // axios.get('http://127.0.0.1:8000/devices')
-      // .then((response) => setDevices(response.data))
-      // .catch((error) => console.error('Ошибка при загрузке устройств:', error));
-  // }, []);
-
-  
-  const openModal = () => {
-    setIsModalOpen(true);
+  const handleAddPin = () => {
+    setNewController({
+      ...newController,
+      pins: [...newController.pins, { pin: "", type: "digital", mode: "output" }]
+    });
   };
 
-  
-  const closeModal = () => {
+  const handleAddController = () => {
+    if (!newController.name || newController.pins.some(p => !p.pin)) {
+      alert("Заполните все поля!");
+      return;
+    }
+    onAddController(newController);
     setIsModalOpen(false);
-    setName('');
-    setDataType('');
-    setCurrentValue(0);
-  };
-
-  // Добавление нового устройства
-  const addDevice = () => {
-    //axios.post('http://31.128.49.209/api/devices', 
-    axios.post('http://127.0.0.1:8000/devices/', {
-      name: name,          // Название устройства
-      data_type: dataType, // Тип данных устройства
-      range_value: [],     // Пустой список
-      current_value: currentValue, // Текущее значение
-    })
-      .then((response) => {
-        // В ответе будет device_id
-        const newDevice = {
-          id: response.data.device_id,
-          name: name,
-          data_type: dataType,
-          current_value: currentValue,
-          status: 'ВКЛ/ВЫКЛ', 
-        };
-        setDevices([...devices, newDevice]); // Добавляем новое устройство в список
-        closeModal(); 
-      })
-      .catch((error) => console.error('Ошибка при добавлении устройства:', error));
-  };
-
-  // Удаление устройства
-  const deleteDevice = (id) => {
-    axios.delete(`http://31.128.49.209/api/devices/${id}`)
-      .then(() => setDevices(devices.filter((device) => device.id !== id)))
-      .catch((error) => console.error('Ошибка при удалении устройства:', error));
-  };
-
-  // Настройка устройства
-  const configureDevice = (id) => {
-    console.log(`Настройка устройства ${id}`);
+    setNewController({
+      name: "",
+      type: "ESP32",
+      pins: [{ pin: "", type: "digital", mode: "output" }]
+    });
   };
 
   return (
-    <div className="devices-page">
-      <div className="content">
-        <h2>Устройства</h2>
-        <Button type='primary' onClick={openModal}>Добавить устройство</Button> {/* Кнопка для открытия модального окна */}
+    <div className='devices-page'>
+      <Button type="primary" onClick={() => setIsModalOpen(true)}>
+        Добавить микроконтроллер
+      </Button>
 
-        {devices.length === 0 ? (
-          <p>Устройства отсутствуют. Добавьте новое устройство.</p>
-        ) : (
-          devices.map((device) => (
-            <Card
-              key={device.id}
-              title={device.name}
-              status={device.status}
-              onConfigure={() => configureDevice(device.id)}
-              onDelete={() => deleteDevice(device.id)}
+      <Modal
+        title="Новый микроконтроллер"
+        open={isModalOpen}
+        onOk={handleAddController}
+        onCancel={() => setIsModalOpen(false)}
+        width={700}
+      >
+        <Input
+          placeholder="Название (ESP32 Кухня)"
+          value={newController.name}
+          onChange={(e) => setNewController({...newController, name: e.target.value})}
+          style={{ marginBottom: 16 }}
+        />
+        
+        <Select
+          value={newController.type}
+          onChange={(type) => setNewController({...newController, type})}
+          style={{ width: '100%', marginBottom: 16 }}
+        >
+          <Option value="ESP32">ESP32</Option>
+          <Option value="Arduino">Arduino</Option>
+          <Option value="Raspberry">Raspberry Pi</Option>
+        </Select>
+
+        <Divider orientation="left">Конфигурация пинов</Divider>
+        {newController.pins.map((pin, index) => (
+          <div key={index} style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
+            <Input
+              placeholder="Пин (D12, A0)"
+              value={pin.pin}
+              onChange={(e) => {
+                const newPins = [...newController.pins];
+                newPins[index].pin = e.target.value.toUpperCase();
+                setNewController({...newController, pins: newPins});
+              }}
+              style={{ width: 120 }}
             />
-          ))
-        )}
+            <Select
+              value={pin.type}
+              onChange={(type) => {
+                const newPins = [...newController.pins];
+                newPins[index].type = type;
+                setNewController({...newController, pins: newPins});
+              }}
+              style={{ width: 120 }}
+            >
+              <Option value="digital">Цифровой</Option>
+              <Option value="analog">Аналоговый</Option>
+            </Select>
+            <Select
+              value={pin.mode}
+              onChange={(mode) => {
+                const newPins = [...newController.pins];
+                newPins[index].mode = mode;
+                setNewController({...newController, pins: newPins});
+              }}
+              style={{ width: 120 }}
+            >
+              <Option value="input">Input</Option>
+              <Option value="output">Output</Option>
+            </Select>
+            <Button 
+              danger 
+              onClick={() => {
+                const newPins = [...newController.pins];
+                newPins.splice(index, 1);
+                setNewController({...newController, pins: newPins});
+              }}
+            >
+              Удалить
+            </Button>
+          </div>
+        ))}
+        <Button onClick={handleAddPin}>Добавить пин</Button>
+      </Modal>
 
-        {/* Модальное окно для добавления устройства */}
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
-          <h3>Добавить устройство</h3>
-          <input
-            type="text"
-            placeholder="Название устройства"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Тип данных"
-            value={dataType}
-            onChange={(e) => setDataType(e.target.value)}
-            required
-          />
-          <input
-            type="number"
-            placeholder="Текущее значение"
-            value={currentValue}
-            onChange={(e) => setCurrentValue(parseInt(e.target.value))}
-            required
-          />
-          <button onClick={addDevice}>Добавить</button>
-        </Modal>
+      <div style={{ marginTop: 20 }}>
+        {controllers.map(controller => (
+          <Card 
+            key={controller.id} 
+            title={
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span>{controller.type}: {controller.name}</span>
+                <Tag color={controller.status === "online" ? "green" : "red"} style={{ marginLeft: 10 }}>
+                  {controller.status}
+                </Tag>
+              </div>
+            }
+            extra={
+              <Button 
+                danger 
+                onClick={() => onDeleteController(controller.id)}
+              >
+                Удалить
+              </Button>
+            }
+            style={{ marginBottom: 20 }}
+          >
+            <Table
+              columns={[
+                { title: 'Пин', dataIndex: 'pin' },
+                { title: 'Тип', dataIndex: 'type' },
+                { title: 'Режим', dataIndex: 'mode' },
+                { 
+                  title: 'Значение', 
+                  dataIndex: 'value',
+                  render: (value, record) => (
+                    record.type === 'digital' 
+                      ? (value ? 'HIGH' : 'LOW')
+                      : value
+                  )
+                }
+              ]}
+              dataSource={controller.pins}
+              size="small"
+              pagination={false}
+            />
+          </Card>
+        ))}
       </div>
     </div>
   );

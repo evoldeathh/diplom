@@ -1,14 +1,33 @@
-/* Общие стили */
+/* ========== ОБЩИЕ СТИЛИ ========== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden; /* Запрет скролла для всей страницы */
+  overflow: hidden;
 }
 
-/* Шапка */
+/* ========== СТИЛИ ДЛЯ СТРАНИЦЫ АВТОРИЗАЦИИ ========== */
+body.auth-page {
+  background-color: white;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+}
+
+/* ========== ШАПКА ========== */
 .header {
   background-color: #0056b3;
   padding: 10px 20px;
@@ -32,10 +51,16 @@ body {
   text-decoration: underline;
 }
 
-/* Основной контент */
+/* ========== ОСНОВНОЙ КОНТЕНТ ========== */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  margin-left: 350px;
+}
+
 .home-page, .scenario-page, .devices-page {
   padding: 20px;
-  margin-left: 250px; /* Отступ для боковой панели */
+  margin-left: 250px;
 }
 
 .content {
@@ -43,7 +68,7 @@ body {
   margin: 0 auto;
 }
 
-/* Карточки */
+/* ========== КАРТОЧКИ ========== */
 .card {
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -52,6 +77,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
 }
 
 .card h3 {
@@ -75,20 +101,17 @@ body {
   background-color: #ddd;
 }
 
-/* Общие стили для форм авторизации и регистрации */
+/* ========== ФОРМЫ ========== */
 .auth-form {
   max-width: 400px;
-  margin: 50px auto;
+  margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  margin-left: 350px;
 }
 
 .auth-form h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #333;
 }
 
 .auth-form label {
@@ -99,44 +122,44 @@ body {
 
 .auth-form input {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
   border-radius: 4px;
 }
 
 .auth-form button {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
+  padding: 12px;
+  margin-top: 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+}
+
+.auth-form button[type="submit"] {
+  background-color: #0056b3;
+  color: white;
+}
+
+.register-button, .back-button {
+  background-color: #f0f0f0;
+  color: #333;
 }
 
 .auth-form button:hover {
-  background-color: #0056b3;
+  opacity: 0.9;
 }
 
-.back-button, .register-button {
-  margin-top: 10px;
-  background-color: #6c757d;
-}
-
-.back-button:hover, .register-button:hover {
-  background-color: #5a6268;
-}
-
-/* Боковая панель */
+/* ========== БОКОВАЯ ПАНЕЛЬ ========== */
 .sidebar {
   width: 250px;
-  background-color: #f5f5f5;
+  background-color: #cecece;
   padding: 20px;
-  height: calc(100vh - 60px); /* Высота минус высота шапки */
-  border-radius: 10px;
-  position: fixed; /* Фиксированная позиция */
-  top: 60px; /* Отступ сверху, чтобы не перекрывать шапку */
+  height: calc(100vh - 60px);
+  position: fixed;
+  top: 60px;
   left: 0;
 }
 
@@ -156,52 +179,10 @@ body {
 }
 
 .sidebar nav a:hover {
-  background-color: #ddd; /* Цвет фона при наведении */
+  background-color: #ddd;
 }
 
-/* Основной контент */
-.main-content {
-  flex-grow: 1; /* Основной контент занимает оставшееся пространство */
-  padding: 20px;
-  margin-left: 350px; /* Отступ для боковой панели */
-}
-
-/* Панель управления данными */
-.data-control-panel {
-  padding: 10px 20px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 250px; /* Отступ для боковой панели */
-}
-
-.data-control-panel select {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Область с виджетами */
-.widget-area {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Два столбца */
-  gap: 20px; /* Отступ между виджетами */
-  padding: 20px;
-  margin-left: 250px; /* Отступ для боковой панели */
-}
-
-.widget {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Стили для модального окна */
+/* ========== МОДАЛЬНЫЕ ОКНА ========== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -234,7 +215,111 @@ body {
   cursor: pointer;
 }
 
-/* ВСЕ ДЛЯ ПУСТОГО ДАШБОРДА */
+/* ========== DASHBOARD СТИЛИ ========== */
+.dashboard-layout {
+  min-height: 100vh;
+  background: #fff;
+  margin-left: 250px;
+  transition: margin-left 0.3s;
+}
+
+.dashboard-content {
+  padding: 24px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.dashboard-card {
+  transition: all 0.3s;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.dashboard-editor-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dashboard-name-input {
+  width: 300px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.view-container {
+  margin-left: 250px; /* Совпадает с сайдбаром */
+  padding: 24px;
+  min-height: calc(100vh - 64px); /* Высота минус header */
+  background-color: #f0f2f5;
+  transition: margin-left 0.3s;
+}
+
+.view-content {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  min-height: 80vh;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.view-title {
+  color: #1890ff;
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+
+.view-workspace {
+  position: relative;
+  min-height: 500px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.view-widget {
+  position: absolute;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  cursor: default;
+  transition: all 0.3s;
+}
+
+.view-widget:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+
+
+.dashboard-name-input:focus {
+  boxShadow: none;
+}
+
+.save-dashboard-button {
+  height: 40px;
+}
+
 .empty-dashboard {
   display: flex;
   flex-direction: column;
@@ -256,76 +341,106 @@ body {
   margin-bottom: 24px;
 }
 
-/* ДАШБОРД СОЗДАНИЕ */
+/* ========== WIDGET СТИЛИ ========== */
 .widget-sidebar {
-  background-color: #f0f2f5;
+  background: #fff;
+  border-right: 1px solid #f0f0f0;
+}
+
+.widget-list-container {
   padding: 16px;
-  border-right: 1px solid #ddd;
 }
 
-.widget-list h3 {
-  font-size: 18px;
+.widget-list-title {
   margin-bottom: 16px;
+  font-size: 16px;
 }
 
-.workspace-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(70vh - 150px); /* Уменьшаем высоту, чтобы освободить место для кнопки */
-  padding: 10px;
-  
+.widget-menu {
+  border-right: 0;
 }
 
-.workspace-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.workspace-header h1 {
+.widget-menu-item {
+  padding: 0;
   margin: 0;
-  font-size: 24px;
 }
 
-.workspace-header input {
-  font-size: 24px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #333;
+.widget-item {
+  padding: 12px 16px;
+  margin: 8px 0;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-.workspace-grid {
-  flex-grow: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Сетка */
-  gap: 16px;
-  padding: 10px;
-  border: 2px dashed #ccc; /* Выделение рабочей области */
-  border-radius: 8px;
-  background-color: #fff;
-  overflow-y: auto; /* Прокрутка только внутри рабочей области */
-  max-height: calc(100vh - 200px); /* Ограничиваем высоту рабочей области */
+.widget-item:hover {
+  border-color: #1890ff;
+  background: #f5f5f5;
 }
 
 .draggable-widget {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  background-color: #f9f9f9;
-  text-align: center;
+  position: absolute;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  min-height: 120px;
+  z-index: 1;
+  cursor: grab;
+}
+
+.draggable-widget.widget-dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.widget-handle {
+  padding: 6px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
   cursor: move;
-  height: 17vh;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  font-size: 18px;
+  color: #666;
 }
 
-.save-button-container {
-  text-align: right; /* Кнопка сохранения справа */
-  margin-top: 10px; /* Уменьшаем отступ сверху */
-  padding: 10px;
+.widget-content {
+  padding: 16px;
+  pointer-events: auto;
 }
 
-.save-button-container .ant-btn {
-  padding: 8px 16px; /* Уменьшаем размер кнопки */
-  font-size: 14px;
+.workspace-container {
+  position: relative;
+  height: calc(100vh - 220px);
+  min-height: 500px;
+  background: #fafafa;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  margin: 16px 0;
+  overflow: auto;
+}
+
+.workspace-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+/* ========== ВИДЖЕТЫ ========== */
+.slider-widget, .switch-widget {
+  padding: 16px;
+}
+
+.slider-widget h3, .switch-widget h3 {
+  margin-bottom: 16px;
+}
+
+.widget-control {
+  pointer-events: auto !important;
 }
